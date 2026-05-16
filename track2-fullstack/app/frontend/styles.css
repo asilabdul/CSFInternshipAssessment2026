@@ -115,6 +115,17 @@ section { margin-top: 2rem; }
 section h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; }
 section h4 { font-size: 0.95rem; font-weight: 600; margin: 1.5rem 0 0.75rem; }
 
+.latest-stat {
+  background: #eef5ea;
+  border: 1px solid #d7e8cf;
+  border-radius: 6px;
+  color: #2d5016;
+  display: inline-block;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  padding: 0.5rem 0.75rem;
+}
+
 /* Form */
 form { display: flex; flex-direction: column; gap: 0.6rem; max-width: 380px; }
 label { display: flex; flex-direction: column; gap: 0.2rem; font-size: 0.875rem; color: #555; }

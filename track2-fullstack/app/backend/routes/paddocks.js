@@ -12,9 +12,12 @@ router.post('/', (req, res) => {
   if (!name || !capacity) {
     return res.status(400).json({ error: 'name and capacity are required' });
   }
+  if (!Number.isInteger(Number(capacity)) || Number(capacity) <= 0) {
+    return res.status(422).json({ error: 'capacity must be a positive integer' });
+  }
   const result = db.prepare(
     'INSERT INTO paddocks (name, capacity) VALUES (?, ?)'
-  ).run(name, capacity);
+  ).run(name, Number(capacity));
   const paddock = db.prepare('SELECT * FROM paddocks WHERE id = ?').get(result.lastInsertRowid);
   res.status(201).json(paddock);
 });

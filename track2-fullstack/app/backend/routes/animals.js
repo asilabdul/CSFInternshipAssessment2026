@@ -191,4 +191,35 @@ router.post('/:id/health-events', (req, res) => {
   res.status(201).json(event);
 });
 
+router.get('/:id/weights', (req, res) => {
+  const animal = getAnimal(req.params.id);
+  if (!animal) return res.status(404).json({ error: 'Animal not found' });
+
+  const weights = db.prepare(
+    'SELECT * FROM weights WHERE animal_id = ? ORDER BY date DESC, id DESC'
+  ).all(req.params.id);
+  res.json(weights);
+});
+
+router.post('/:id/weights', (req, res) => {
+  const animal = getAnimal(req.params.id);
+  if (!animal) return res.status(404).json({ error: 'Animal not found' });
+
+  const weightKg = Number(req.body.weight_kg);
+  if (!Number.isFinite(weightKg) || weightKg <= 0) {
+    return res.status(422).json({ error: 'weight_kg must be a positive number' });
+  }
+
+  if (!req.body.date) {
+    return res.status(422).json({ error: 'date is required' });
+  }
+
+  const result = db.prepare(
+    'INSERT INTO weights (animal_id, weight_kg, date, notes) VALUES (?, ?, ?, ?)'
+  ).run(req.params.id, weightKg, req.body.date, req.body.notes ?? null);
+
+  const weight = db.prepare('SELECT * FROM weights WHERE id = ?').get(result.lastInsertRowid);
+  res.status(201).json(weight);
+});
+
 module.exports = router;

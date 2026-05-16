@@ -2,7 +2,7 @@ const { db, initDb } = require('./db');
 
 initDb();
 
-db.exec('DELETE FROM health_events; DELETE FROM animals; DELETE FROM paddocks;');
+db.exec('DELETE FROM weights; DELETE FROM health_events; DELETE FROM animals; DELETE FROM paddocks;');
 
 const insertPaddock = db.prepare('INSERT INTO paddocks (name, capacity, animal_count) VALUES (?, ?, 0)');
 const northId = insertPaddock.run('North Paddock', 50).lastInsertRowid;
@@ -41,6 +41,10 @@ const insertEvent = db.prepare(
   'INSERT INTO health_events (animal_id, event_type, notes, date, vet_name) VALUES (?, ?, ?, ?, ?)'
 );
 
+const insertWeight = db.prepare(
+  'INSERT INTO weights (animal_id, weight_kg, date, notes) VALUES (?, ?, ?, ?)'
+);
+
 const types = ['vaccination', 'checkup', 'treatment'];
 const vets  = ['Dr. McGregor', 'Dr. Walsh'];
 
@@ -52,6 +56,11 @@ animalIds.slice(0, 6).forEach((animalId, i) => {
     `2024-${String((i % 9) + 1).padStart(2, '0')}-15`,
     vets[i % 2]
   );
+});
+
+animalIds.slice(0, 4).forEach((animalId, i) => {
+  insertWeight.run(animalId, 38.5 + i, '2024-06-01', 'Spring baseline');
+  insertWeight.run(animalId, 42.0 + i, '2024-11-15', 'Fall check-in');
 });
 
 console.log('Database seeded successfully.');
